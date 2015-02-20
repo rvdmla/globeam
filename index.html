@@ -1,0 +1,231 @@
+<html ng-app="GloBeam" ng-controller="MainController">
+
+  <head>
+
+    <title>
+
+      GloBeam &mdash; Pay Smarter
+
+    </title>
+
+    <base href="/">
+
+    <meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+    <link rel="stylesheet" href="//cloud.typography.com/7867512/618366/css/fonts.css">
+
+    <link rel="stylesheet" href="styles/index.css">
+
+    <link rel="stylesheet" href="styles/mobile.css" media="( max-width : 767px )">
+
+    <script src="scripts/angular.min.js"></script>
+
+    <script src="scripts/angular-route.min.js"></script>
+
+    <script>
+
+      angular
+
+        .module( 'GloBeam' , [
+
+          'ngRoute'
+
+        ])
+
+        .config( function( $locationProvider , $routeProvider ) {
+
+          $locationProvider
+
+            .html5Mode( false );
+
+          $routeProvider
+
+            .when( '/' , {
+
+              templateUrl : 'views/home.html'
+
+            })
+
+            .when( '/consumer' , {
+
+              templateUrl : 'views/consumer.html'
+
+            })
+
+            .when( '/business' , {
+
+              templateUrl : 'views/business.html'
+
+            })
+
+            .otherwise({
+
+              redirectTo : '/'
+
+            });
+
+        })
+
+        .controller( 'MainController' , function( $scope , $timeout , $window ) {
+
+          var checked;
+
+          var start = 0;
+
+          var cooldown = false;
+
+          /* Swipe */
+
+          $window.addEventListener( 'touchstart' , function( event ) {
+
+            console.log( event );
+
+            start = event.touches[ 0 ].clientY;
+
+          });
+
+          $window.addEventListener( 'touchmove' , function( event ) {
+
+            event.preventDefault();
+
+          });
+
+          $window.addEventListener( 'touchend' , function( event ) {
+
+            console.log( event );
+
+            if( !cooldown ) {
+
+              cooldown = true;
+
+              if( start > event.changedTouches[ 0 ].clientY ) {
+
+                for( var element in document.getElementsByTagName( 'input' ) ) {
+
+                  if( document.getElementsByTagName( 'input' )[ element ].type === 'radio' && document.getElementsByTagName( 'input' )[ element ].checked ) {
+
+                    checked = document.getElementsByTagName( 'input' )[ element ];
+
+                  }
+
+                }
+
+                if ( checked.nextElementSibling && checked.nextElementSibling.checked === false ) {
+
+                  checked.nextElementSibling.checked = true;
+
+                }
+
+              }
+
+              if( start < event.changedTouches[ 0 ].clientY ) {
+
+                for( var element in document.getElementsByTagName( 'input' ) ) {
+
+                  if( document.getElementsByTagName( 'input' )[ element ].type === 'radio' && document.getElementsByTagName( 'input' )[ element ].checked ) {
+
+                    checked = document.getElementsByTagName( 'input' )[ element ];
+
+                  }
+
+                }
+
+                if ( checked.previousElementSibling && checked.previousElementSibling.checked === false ) {
+
+                  checked.previousElementSibling.checked = true;
+
+                }
+
+              }
+
+              $timeout( function() {
+
+                cooldown = false;
+
+              } , 1000 );
+
+            }
+
+          });
+
+          /* Scroll */
+
+          $window.addEventListener( 'mousewheel' , function( event ) {
+
+            if( Math.abs( event.wheelDeltaX ) <= Math.abs( event.wheelDeltaY ) ) {
+
+              if( !cooldown ) {
+
+                cooldown = true;
+
+                if( event.wheelDeltaY < 0 ) {
+
+                  for( var element in document.getElementsByTagName( 'input' ) ) {
+
+                    if( document.getElementsByTagName( 'input' )[ element ].type === 'radio' && document.getElementsByTagName( 'input' )[ element ].checked ) {
+
+                      checked = document.getElementsByTagName( 'input' )[ element ];
+
+                    }
+
+                  }
+
+                  if ( checked.nextElementSibling && checked.nextElementSibling.checked === false ) {
+
+                    checked.nextElementSibling.checked = true;
+
+                  }
+
+                }
+
+                if( event.wheelDeltaY > 0 ) {
+
+                  for( var element in document.getElementsByTagName( 'input' ) ) {
+
+                    if( document.getElementsByTagName( 'input' )[ element ].type === 'radio' && document.getElementsByTagName( 'input' )[ element ].checked ) {
+
+                      checked = document.getElementsByTagName( 'input' )[ element ];
+
+                    }
+
+                  }
+
+                  if ( checked.previousElementSibling && checked.previousElementSibling.checked === false ) {
+
+                    checked.previousElementSibling.checked = true;
+
+                  }
+
+                }
+
+                $timeout( function() {
+
+                  cooldown = false;
+
+                } , 1200 );
+
+              }
+
+            }
+
+          });
+
+        })
+
+        .controller( 'FormController' , function( $scope ) {
+
+          $scope.submit = function() {
+
+            document.getElementById( 'thank-you' ).checked = true;
+
+          };
+
+        });
+
+    </script>
+
+  </head>
+
+  <body ng-view></body>
+
+</html>
